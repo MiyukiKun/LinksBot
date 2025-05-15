@@ -1,0 +1,5 @@
+telethon
+pymongo
+dnspython
+python-dotenv
+motor

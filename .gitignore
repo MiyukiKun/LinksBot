@@ -1,0 +1,6 @@
+__pycache__
+bot.session
+bot.session-journal
+.env
+.vscode
+.python-version
