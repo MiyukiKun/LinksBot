@@ -86,7 +86,7 @@ async def _(event):
             )
         )
         
-    await LinksDB.add({'_id': channel_id, 'link': result.link, 'r': r})
+    await LinksDB.add({'_id': channel_id, 'link': result.link, 'req': r})
 
     last_run_times[channel_id] = now
     data = helper.encrypt(str(channel_id))
