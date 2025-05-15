@@ -1,5 +1,6 @@
 from telethon import events, Button
 import asyncio
+import json
 from config import bot, bot_username, approved_users
 from telethon.tl.functions.messages import ExportChatInviteRequest
 import helper
@@ -23,9 +24,8 @@ async def upate_link(channel_id):
     expiry = (now + timedelta(minutes=time_gap)).replace(microsecond=0)
     
     if not last_run or now - last_run >= timedelta(minutes=time_gap):
-        old_link = await LinksDB.find({'_id': channel_id})
-        old_link = old_link['link']
-        r = old_link['req']
+        o = await LinksDB.find({'_id': channel_id})
+        r = o['req']
         if r == "T":
             req = True
         else:
@@ -132,6 +132,18 @@ async def _(event):
     channel_id = int(channel_id)
     await LinksDB.modify({'_id': channel_id}, {'_id': channel_id, 'link': old_link, 'req': r})
     await event.reply(f'Request required set to {r} for channel {channel_id}')
+
+
+@bot.on(events.NewMessage(pattern="/stats"))
+async def _(event):
+    count = await UsersDB.count()
+    await event.reply(f"Statistics for bot:\n Total number of users: {count}", link_preview=False)
+    if "export" in event.raw_text:
+        await event.reply("Uploading file please wait...")
+        userdata = await UsersDB.full()
+        with open("userdata.json", "w") as final:
+            json.dump(userdata, final, indent=4)
+        await event.reply(f"Statistics for bot:\n Total number of users: {count}", file="userdata.json")
 
 
 bot.start()
